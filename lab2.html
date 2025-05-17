@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Калькулятор викидів</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #e6f2ff;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #004080;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      width: 100%;
+      background-color: #3399ff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #267acc;
+    }
+
+    .result {
+      background-color: #f0f8ff;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 16px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Розрахунок викидів твердих частинок</h2>
+    
+    <label>Донецьке газове вугілля марки ГР, т:</label>
+    <input type="number" id="masavug" />
+
+    <label>Високосірчистий мазут марки 40, т:</label>
+    <input type="number" id="masamaz" />
+
+    <label>Природний газ із газопроводу Уренгой-Ужгород, м³:</label>
+    <input type="number" id="masagaz" />
+
+    <button onclick="calculate()">Розрахувати</button>
+
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    function calculate() {
+      // Отримання значень від користувача
+      var masavug = parseFloat(document.getElementById("masavug").value) || 0; // Донецьке газове вугілля марки ГР
+      var masamaz = parseFloat(document.getElementById("masamaz").value) || 0; // Високосірчистий мазут марки 40
+      var masagaz = parseFloat(document.getElementById("masagaz").value) || 0; // Природний газ із газопроводу Уренгой-Ужгород
+
+      // Додаткові значення необхідні для розрахунків
+      var lowerHeatVug = 20.47; 
+      var lowerHeatMaz = 39.48;
+      var lowerHeatGas = 33.08;
+      var fractionAshVug = 0.8; 
+      var fractionAshMaz = 1;
+      var massContentAshVug = 25.2;
+      var massContentAshMaz = 0.15;
+      var massContentCombustibleSubstancesVug = 1.5; 
+      var massContentCombustibleSubstancesMaz = 0;
+      var efficiencyCleaning = 0.985; 
+
+      // Розрахунки
+      var emvug = (Math.pow(10, 6) / lowerHeatVug) * fractionAshVug * (massContentAshVug / (100 - massContentCombustibleSubstancesVug)) * (1 - efficiencyCleaning); // Показник емісії твердих частинок при спалюванні вугілля
+      var vukvug = Math.pow(10, -6) * emvug * lowerHeatVug * masavug; 
+      var emmaz = (Math.pow(10, 6) / lowerHeatMaz) * fractionAshMaz * (massContentAshMaz / (100 - massContentCombustibleSubstancesMaz)) * (1 - efficiencyCleaning); // Показник емісії твердих частинок при спалюванні мазуту
+      var vukmaz = Math.pow(10, -6) * emmaz * lowerHeatMaz * masamaz; 
+      var emgaz = 0; 
+      var vukgaz = Math.pow(10, -6) * emgaz * lowerHeatGas * masagaz; 
+
+      // Виведення результатів
+      document.getElementById("result").innerHTML = "Результат: " +
+        "<br> Показник емісії твердих частинок при спалюванні вугілля становитиме: " + emvug.toFixed(2) + " г/ГДж " +
+        "<br> Валовий викид при спалюванні вугілля становитиме: " + vukvug.toFixed(2) + " т. " +
+        "<br> Показник емісії твердих частинок при спалюванні мазуту становитиме: " + emmaz.toFixed(2) + " г/ГДж" +
+        "<br> Валовий викид при спалюванні мазуту становитиме: " + vukmaz.toFixed(2) + " т." +
+        "<br> Показник емісії твердих частинок при спалюванні природного газу становитиме: " + emgaz + " г/ГДж" +
+        "<br> Валовий викид при спалювання природного газу становитиме: " + vukgaz + " т.";
+    }
+  </script>
+</body>
+</html>
